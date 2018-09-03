@@ -47,6 +47,22 @@
 		printf("\\draw(%f,-%f)\nto[C] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)-1)/4,((float)((strtoimax(third,NULL,10)+32)/16)+2)/4,((float)(strtoimax(fourth,NULL,10)/16)-1)/4);
 	}
 
+	void diodeLine(){
+	printf("\\draw(%f,-%f)\nto[D] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-1)/4,((float)(strtoimax(fourth,NULL,10)/16))/4,((float)((strtoimax(third,NULL,10)+32)/16)-1)/4,((float)(strtoimax(fourth,NULL,10)/16)+4)/4);
+	}
+
+	void diode90Line(){
+		printf("\\draw(%f,-%f)\nto[D] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)+1)/4,((float)((strtoimax(third,NULL,10)+32)/16)-6)/4,((float)(strtoimax(fourth,NULL,10)/16)+1)/4);
+	}
+
+	void diode180Line(){
+		printf("\\draw(%f,-%f)\nto[D] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-3)/4,((float)(strtoimax(fourth,NULL,10)/16)-0)/4,((float)((strtoimax(third,NULL,10)+32)/16)-3)/4,((float)(strtoimax(fourth,NULL,10)/16)-4)/4);
+	}
+
+	void diode270Line(){
+		printf("\\draw(%f,-%f)\nto[D] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)-1)/4,((float)((strtoimax(third,NULL,10)+32)/16)+2)/4,((float)(strtoimax(fourth,NULL,10)/16)-1)/4);
+	}
+
 	void indLine(){
 		printf("\\draw(%f,-%f)\nto[L] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-1)/4,((float)(strtoimax(fourth,NULL,10)/16)+1)/4,((float)((strtoimax(third,NULL,10)+32)/16)-1)/4,((float)(strtoimax(fourth,NULL,10)/16)+6)/4);
 	}
@@ -79,6 +95,10 @@
 		printf("\\draw(%f,-%f)\nto[V] (%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-1)/4,((float)(strtoimax(fourth,NULL,10)/16)-0)/4,((float)((strtoimax(third,NULL,10)+32)/16)+4)/4,((float)(strtoimax(fourth,NULL,10)/16)-0)/4);
 	}
 
+	void npn(){
+		printf("\\draw (%f,-%f)\n to[short](%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4,(((float)((strtoimax(third,NULL,10)+32)/16)-2)/4)+0.15,((float)(strtoimax(fourth,NULL,10)/16)+3)/4);
+		printf("\\draw (%f,-%f) node[npn](npn1) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)+2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4);
+	}
 
 
 	void SymbolLine(){
@@ -171,6 +191,30 @@
 		else{
 			indLine();
 		}
+	}
+	else if(strcmp(second,"diode")==0){
+		fgets(line2,sizeof(line2),fp);
+		first2 = strtok(line2," ");
+		second2 = strtok(NULL," ");
+		third2 = strtok(NULL," ");
+		fourth2 = strtok(NULL," ");
+		fivth2 = strtok(NULL," ");
+		if((strcmp(first2,"WINDOW")==0) && (strcmp(fivth2,"VBottom")==0)){
+			diode90Line();
+		}
+		else if((strcmp(first2,"WINDOW")==0) && (strcmp(fivth2,"VTop")==0)){
+			diode270Line();
+		}
+
+		else if((strcmp(first2,"WINDOW")==0) && (strcmp(fivth2,"Left")==0)){
+			diode180Line();
+		}
+		else{
+			diodeLine();
+		}
+	}
+	else if(strcmp(second,"npn")==0){
+		npn();
 	}
 	else{
 		printf("Unknown\n");
