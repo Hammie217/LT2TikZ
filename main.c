@@ -12,6 +12,7 @@
 	char line2[255];
 	int min =1000, max=0;
 	int rotated;
+	int transistorCount =0;
 	void wireLine(){
 	printf("\\draw(%f,-%f)\nto[short] (%lf,-%f);\n",((float)strtoimax(second,NULL,10)/16)/4,((float)strtoimax(third,NULL,10)/16)/4,((float)strtoimax(fourth,NULL,10)/16)/4,((float)strtoimax(fivth,NULL,10)/16)/4);
 	}
@@ -96,8 +97,23 @@
 	}
 
 	void npn(){
-		printf("\\draw (%f,-%f)\n to[short](%f,-%f);\n",((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4,(((float)((strtoimax(third,NULL,10)+32)/16)-2)/4)+0.15,((float)(strtoimax(fourth,NULL,10)/16)+3)/4);
-		printf("\\draw (%f,-%f) node[npn](npn1) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)+2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4);
+		printf("\\draw (%f,-%f) node[npn](npn%d) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)+2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4,transistorCount);
+		printf("\\draw (npn%d.B) to[short](%f,-%f);",transistorCount,((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)+3)/4);
+	}
+
+	void npn90(){
+		printf("\\draw (%f,-%f) node[npn,rotate=-90](npn%d) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)-5)/4,((float)(strtoimax(fourth,NULL,10)/16)+4)/4,transistorCount);
+		printf("\\draw (npn%d.B) to[short](%f,-%f);",transistorCount,((float)((strtoimax(third,NULL,10)+32)/16)-5)/4,((float)(strtoimax(fourth,NULL,10)/16)+0)/4);
+	}
+
+	void npn180(){
+		printf("\\draw (%f,-%f) node[npn,rotate=180](npn%d) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)-6)/4,((float)(strtoimax(fourth,NULL,10)/16)-3)/4,transistorCount);
+		printf("\\draw (npn%d.B) to[short](%f,-%f);",transistorCount,((float)((strtoimax(third,NULL,10)+32)/16)-2)/4,((float)(strtoimax(fourth,NULL,10)/16)-3)/4);
+	}
+
+	void npn270(){
+		printf("\\draw (%f,-%f) node[npn,rotate=90](npn%d) {};\n",((float)((strtoimax(third,NULL,10)+32)/16)+1)/4,((float)(strtoimax(fourth,NULL,10)/16)-4)/4,transistorCount);
+		printf("\\draw (npn%d.B) to[short](%f,-%f);",transistorCount,((float)((strtoimax(third,NULL,10)+32)/16)+1)/4,((float)(strtoimax(fourth,NULL,10)/16)+0)/4);
 	}
 
 
@@ -214,7 +230,20 @@
 		}
 	}
 	else if(strcmp(second,"npn")==0){
-		npn();
+		transistorCount++;
+		if((strcmp(fivth,"R90\n")==0)){
+			npn90();
+		}
+		else if((strcmp(fivth,"R270\n")==0)){
+			npn270();
+		}
+
+		else if((strcmp(fivth,"R180\n")==0)){
+			npn180();
+		}
+		else{
+			npn();
+		}
 	}
 	else{
 		printf("Unknown\n");
