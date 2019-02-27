@@ -3,16 +3,48 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <stdio.h>
+#include <gtk/gtk.h>
 
 	char *first, *second, *third, *fourth, *fivth;
 	char *first2, *second2, *third2, *fourth2, *fivth2;
-	char *fileName;
+	char *fileName ="";
 	FILE *fp;
 	char line[255];
 	char line2[255];
 	int min =1000, max=0;
 	int rotated;
 	int transistorCount =0;
+
+
+GtkWidget *
+create_filechooser_dialog(char *init_path, GtkFileChooserAction action)
+{
+  GtkWidget *wdg = NULL;
+
+  switch (action) {
+    case GTK_FILE_CHOOSER_ACTION_SAVE:
+      wdg = gtk_file_chooser_dialog_new("Save file", NULL, action,
+        "Cancel", GTK_RESPONSE_CANCEL,
+        "Save", GTK_RESPONSE_OK,
+        NULL);
+      break;
+
+    case GTK_FILE_CHOOSER_ACTION_OPEN:
+      wdg = gtk_file_chooser_dialog_new("Open file", NULL, action,
+        "Cancel", GTK_RESPONSE_CANCEL,
+        "Open", GTK_RESPONSE_OK,
+        NULL);
+      break;
+
+    case GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER:
+    case GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER:
+      break;
+  }
+
+  return wdg;
+}
+
 	void wireLine(){
 	printf("\\draw(%f,-%f)\nto[short] (%lf,-%f);\n",((float)strtoimax(second,NULL,10)/16)/4,((float)strtoimax(third,NULL,10)/16)/4,((float)strtoimax(fourth,NULL,10)/16)/4,((float)strtoimax(fivth,NULL,10)/16)/4);
 	}
@@ -252,15 +284,30 @@
 
 
 
-int main(){
+int main(int argc, char *argv[])
+{
+  GtkWidget *wdg;
+ 
+
+  if (argc == 2)
+    fileName = argv[1];
+
+  gtk_init(&argc, &argv);
+
+  wdg = create_filechooser_dialog(fileName, GTK_FILE_CHOOSER_ACTION_OPEN);
+  if (gtk_dialog_run(GTK_DIALOG(wdg)) == GTK_RESPONSE_OK) {
+    fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(wdg));
+    
+  } else  
+    return (1);
 
 
-	fileName = (char *) malloc(255);
-	printf("Input File path and name:  ");
-	scanf("%s",fileName);
-	printf("Length:%u\n",(unsigned)strlen(fileName));
-	fileName = (char *) realloc(fileName,(unsigned)strlen(fileName));
-	printf("string: %s\n",fileName);
+	//fileName = (char *) malloc(255);
+	//printf("Input File path and name:  ");
+	//scanf("%s",fileName);
+	//printf("Length:%u\n",(unsigned)strlen(fileName));
+	//fileName = (char *) realloc(fileName,(unsigned)strlen(fileName));
+	//printf("string: %s\n",fileName);
 	fp = fopen(fileName,"r");
 	while(fgets(line,sizeof(line),fp)!=NULL){
 		first = strtok(line," ");
@@ -299,8 +346,9 @@ int main(){
 			//min max on 3,4
 		}
 	}
-	printf("Min: %d\nMax: %d\n", min,max);
+	//printf("Min: %d\nMax: %d\n", min,max);
 	rewind(fp);
+	printf("%s","\\begin{circuitikz}[american, european resistors]\n");
 	while(fgets(line,sizeof(line),fp)!=NULL){
 		first = strtok(line," ");
 		second = strtok(NULL," ");
@@ -314,6 +362,8 @@ int main(){
 			SymbolLine();
 		}
 	}
+	printf("%s","\\end{circuitikz}\n");
+
 	fclose(fp);
 	return 0;
 }
